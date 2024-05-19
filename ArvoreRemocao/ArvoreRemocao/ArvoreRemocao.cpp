@@ -248,12 +248,67 @@ void removerElementoArvore(NO* no, int valor) {
 
 
 	// caso 1: sem filhos	
-	
+	if (atual->esq == NULL && atual->dir == NULL) { // Esqueda vazio e direita vazio 
+		if (pai == NULL) { //Nó atual é a raiz da arvore
+			raiz = NULL; //logo a arvore ficara vazia
+		}
+		else if (pai->esq == atual) { //Nó atual é o filho esquerdo
+			pai->esq = NULL;
+		}
+		else { 
+			pai->dir = NULL; //Nó atual é o filho direito
+		}
+		free(atual); //Liberamos a memória
+		cout << "Elemento removido\n";
+		return;
+	}
 
 	// caso 2: um filho	
-	
+	if (atual->esq == NULL || atual->dir == NULL) { // Verifica se a arvore tem um filho só, usando OU
+		NO* filho = (atual->esq != NULL) ? atual->esq : atual->dir; // Verifica qual filho e coloca o na variavel.
+		string posicao;
+		if (pai == NULL) { //se a raiz for nula
+			raiz = filho; //filho é a raiz
+			posicao = "raiz";
+		}
+		else if (pai->esq == atual) { //Se for o filho é o da esquerda
+			pai->esq = filho; //apontamos para o filho.
+			posicao = "esquerda";
+		}
+		else { //Se for o filho da direita
+			pai->dir = filho; 
+			posicao = "direita";
+		}
+		free(atual); //Liberamos a memória 
+		cout << "Elemento com 1 filho removido da " << posicao << ": " << valor << endl;
+		return;
+	}
 
 	// caso 3: dois filhos
+	NO* aux = atual->dir; //Começamos pelo Filho da direita
+	NO* paiAux = atual; 
+	/// Procure a caixa mais à esquerda na subárvore direita
+	while (aux->esq != NULL) {
+		paiAux = aux;
+		aux = aux->esq;
+	}
+	// troque atual pela aux
+	atual->valor = aux->valor;
+	string posicao;
+
+	//Ajuste
+	if (paiAux == atual) {
+		paiAux->dir = aux->dir; // atual = direita
+		posicao = "direita";
+	}
+	else {
+		paiAux->esq = aux->dir; // se esta mais distante
+		posicao = "esquerda";
+	}
+
+	free(aux); // Liberemos a memoria
+	cout << "Elemento trocado: " << valor << " (removido da " << posicao << ")" << endl;
+
 
 	// procura o elmento mais a esquerda da sub-arvore da direita
 	NO* sucessor = atual->dir;
